@@ -2,7 +2,148 @@
 
 > *"Built for the citizen who's afraid of government paperwork."*
 
-SahAI is a free, open-source civic companion that helps Indian citizens decode dense government documents and file civic complaints — in their own language, with zero bureaucratic friction.
+---
+
+## The Problem
+
+Every year, millions of Indian citizens receive government notices, tax demands, eviction orders, court summons, utility disconnection letters, and ration card communications — written in dense legal or bureaucratic language that the average person cannot parse. The result:
+
+- **Missed deadlines** because people didn't understand what action was required
+- **Unresolved civic problems** (broken roads, water failures, garbage piles) because filing a formal complaint feels impossible
+- **Power asymmetry** — citizens who can afford lawyers or know the right people navigate the system fine; everyone else doesn't
+
+Language compounds this. Government documents are often in English or formal Hindi, even in states where neither is the citizen's first language.
+
+**SahAI exists to close that gap.**
+
+---
+
+## What SahAI Does
+
+SahAI is a free, open-source AI civic companion that helps Indian citizens:
+
+1. **Understand** any government document — in plain language, in their own tongue
+2. **File** civic complaints — without knowing which department to call or how to phrase a formal grievance
+
+No sign-up. No backend. No data leaves your device except for the AI call. Works on mobile.
+
+---
+
+## Solution Workflow
+
+### 🔍 Tool 1 — Scan & Simplify
+
+```
+Citizen receives a confusing government document
+            │
+            ▼
+    Opens SahAI → /scan
+            │
+            ▼
+  Takes a photo or uploads the document image
+  (file input with capture="environment" for mobile rear camera)
+            │
+            ▼
+  SahAI converts image → base64
+  Sends to Gemini 2.5 Flash (Vision) with a civic-assistance system prompt
+            │
+            ▼
+  Gemini analyses the document and returns structured JSON:
+  ┌─────────────────────────────────────────────┐
+  │  document_type    What kind of document      │
+  │  issuing_dept     Who sent it                │
+  │  plain_summary    What it means (plain lang) │
+  │  action_required  What the citizen must do   │
+  │  deadline         Any due date               │
+  │  urgency          high / medium / low        │
+  │  citizen_steps    Checklist of next actions  │
+  └─────────────────────────────────────────────┘
+            │
+            ▼
+  SahAI renders a clean result card
+  with urgency badge + checklist + Read Aloud button
+            │
+            ▼
+  Citizen understands the document and knows exactly what to do
+```
+
+---
+
+### 📋 Tool 2 — Complaint Tracker (3-step wizard)
+
+```
+Citizen has a civic problem (pothole, broken streetlight, etc.)
+            │
+            ▼
+    Opens SahAI → /complaints
+
+┌─────────────────────────── STEP 1: Details ────────────────────────────┐
+│  Picks an issue category:                                               │
+│  Potholes | Streetlights | Garbage | Water Supply | Others             │
+│                                                                         │
+│  Describes the problem in their own words — any language, any style    │
+│  "MG Road ke paas bahut bada gadda hai, 3 hafte se hai aur accident    │
+│   ho chuka hai"                                                         │
+│                                                                         │
+│  Optionally attaches a photo                                            │
+└─────────────────────────────────────────────────────────────────────────┘
+            │  Next Step ▶
+            ▼
+┌─────────────────────────── STEP 2: Location ───────────────────────────┐
+│  Types the address / area name                                          │
+│  "MG Road, Near Bus Stand, Bengaluru"                                  │
+│                                                                         │
+│  Visual map placeholder confirms the location                           │
+└─────────────────────────────────────────────────────────────────────────┘
+            │  Analyse & Review ▶  (calls Gemini API)
+            ▼
+┌─────────────────────────── STEP 3: Review ─────────────────────────────┐
+│  Gemini classifies the complaint and returns:                           │
+│  ┌──────────────────────────────────────────────────────────┐          │
+│  │  department          Roads & Infrastructure              │          │
+│  │  urgency             High                                │          │
+│  │  urgency_reason      Present for 3 weeks, caused         │          │
+│  │                      accidents — safety risk             │          │
+│  │  suggested_title     "Large Pothole on MG Road           │          │
+│  │                       Causing Accidents"                 │          │
+│  │  formal_complaint    "A large and hazardous pothole is   │          │
+│  │                       present on MG Road, near the bus   │          │
+│  │                       stand, Bengaluru..."               │          │
+│  │  clarifying_question (null if all info is present)       │          │
+│  └──────────────────────────────────────────────────────────┘          │
+│                                                                         │
+│  Citizen reviews → clicks Submit Complaint                              │
+└─────────────────────────────────────────────────────────────────────────┘
+            │  Submit ▶
+            ▼
+┌─────────────────────────── SUCCESS ────────────────────────────────────┐
+│  Complaint saved to localStorage with:                                  │
+│  • Unique Reference ID (e.g. #DB4452F4)                                 │
+│  • Timestamp                                                            │
+│  • Status: Pending                                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+            │  Track My Complaint ▶
+            ▼
+┌─────────────────────────── DASHBOARD ──────────────────────────────────┐
+│  Lists all past complaints with:                                        │
+│  • Department icon + title                                              │
+│  • Urgency badge                                                        │
+│  • Submission date                                                      │
+│  • Clickable status badge: Pending → In Progress → Resolved            │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Key Design Principles
+
+| Principle | How it's applied |
+|---|---|
+| **No literacy barrier** | Plain-language output; Read Aloud via Web Speech API |
+| **No language barrier** | UI in EN/HI/BN; AI responds in the citizen's detected language |
+| **No tech barrier** | Works on any smartphone browser; camera capture built in |
+| **No trust barrier** | No account, no data server, no tracking. All storage is local. |
+| **No cost barrier** | Free to use; only needs a Gemini API key (free tier available) |
 
 ---
 
@@ -62,7 +203,7 @@ SahAI/
 │   ├── context/
 │   │   └── LangContext.jsx       ← Language context + useLang hook
 │   ├── lib/
-│   │   └── gemini.js             ← callGeminiText + callGeminiVision (fence-stripping, error handling)
+│   │   └── gemini.js             ← callGeminiText + callGeminiVision
 │   ├── components/
 │   │   ├── Navbar.jsx            ← Top bar + language toggle + mobile bottom nav
 │   │   ├── UrgencyBadge.jsx      ← Colour-coded High / Medium / Low badge
@@ -109,47 +250,6 @@ npm run dev
 ```
 
 Open [http://localhost:5173](http://localhost:5173).
-
----
-
-## Complaint Wizard — How It Works
-
-The `/complaints` route is a **3-step guided flow**:
-
-```
-Step 1 — Details
-  ↳ Pick an issue category (Potholes / Streetlights / Garbage / Water / Others)
-  ↳ Describe the problem in your own words
-  ↳ Optionally attach a photo
-
-Step 2 — Location
-  ↳ Type the address or area name
-  ↳ Visual map placeholder shows the entered location
-
-Step 3 — Review
-  ↳ Gemini analyses the complaint
-  ↳ Shows: department, urgency, formal complaint text, suggested title
-  ↳ One click to submit → saved to localStorage with a unique reference ID
-
-Dashboard
-  ↳ Lists all past complaints with status badges
-  ↳ Click a badge to cycle: Pending → In Progress → Resolved
-```
-
----
-
-## Document Scanner — Gemini Vision
-
-The `/scan` route sends the image as **base64 inline data** to Gemini 2.5 Flash using the exact system prompt:
-
-```
-You are a civic assistance AI helping Indian citizens understand government documents...
-```
-
-Response is parsed from JSON, with graceful fallback if:
-- Gemini returns an `{"error": ...}` shape
-- The response cannot be parsed (non-document image, blur, etc.)
-- The API key is missing or invalid
 
 ---
 
