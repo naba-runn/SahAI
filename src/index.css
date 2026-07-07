@@ -1,0 +1,191 @@
+/* Google Fonts: Public Sans + Inter fallback */
+@import url('https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,700&family=Inter:wght@400;500;600&display=swap');
+
+/* Material Symbols Outlined */
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Material Symbols icon font ─────────────────────────────────────────── */
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  direction: ltr;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  user-select: none;
+}
+
+@layer base {
+  html {
+    background-color: #fff8f2;
+    color: #1e1b17;
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Public Sans', 'Inter', system-ui, sans-serif;
+    background-color: #fff8f2;
+    min-height: 100vh;
+  }
+}
+
+/* ── Stitch-derived classes (plain CSS, no @apply with hover/pseudo) ──────── */
+
+/* Hero background gradient */
+.hero-gradient {
+  background: linear-gradient(180deg, #fff8f2 0%, #f4ede6 100%);
+}
+
+/* Atmospheric radial glow */
+.bento-glow {
+  background: radial-gradient(circle at center, rgba(249, 115, 22, 0.06) 0%, transparent 70%);
+}
+
+/* Step wizard: active step ring */
+.active-step {
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+}
+
+/* Category card hover lift */
+.category-card {
+  transition: all 0.2s;
+}
+.category-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Drop zone active state (JS-applied class) */
+.drop-zone--active {
+  border-color: #f97316 !important;
+  background-color: #FFF7ED !important;
+}
+
+/* Bento feature card */
+.bento-card {
+  position: relative;
+  background-color: #ffffff; /* surface-container-lowest */
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  border: 1px solid #e0c0b1; /* outline-variant */
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  transition: all 0.3s;
+  overflow: hidden;
+  padding: 24px; /* md spacing */
+}
+.bento-card:hover {
+  box-shadow: 0 8px 32px rgba(30,58,95,0.14);
+  border-color: #fdba74; /* orange-300 */
+}
+.bento-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background-color: #f97316;
+  border-radius: 0.75rem 0 0 0.75rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.bento-card:hover::before {
+  opacity: 1;
+}
+
+/* ── Shared button & form utilities ──────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f97316; /* primary-container */
+  color: #ffffff;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
+.btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+}
+.btn-primary:active {
+  transform: scale(0.97);
+}
+.btn-primary:focus-visible {
+  outline: 2px solid #fdba74;
+  outline-offset: 2px;
+}
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e8e1db; /* surface-container-highest */
+  color: #455f87; /* secondary */
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  border: 1px solid #e0c0b1; /* outline-variant */
+  transition: all 0.2s;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+}
+.btn-secondary:hover {
+  background-color: #e8e1db;
+  filter: brightness(0.96);
+}
+.btn-secondary:active {
+  transform: scale(0.97);
+}
+
+.card {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 16px rgba(30,58,95,0.08);
+  border: 1px solid #e0c0b1;
+  padding: 1.5rem;
+}
+
+.input-base {
+  width: 100%;
+  border: 2px solid #e0c0b1;
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  color: #1e1b17;
+  background-color: #ffffff;
+  font-family: inherit;
+  font-size: 16px;
+  transition: all 0.2s;
+  outline: none;
+}
+.input-base::placeholder {
+  color: #584237;
+  opacity: 0.6;
+}
+.input-base:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249,115,22,0.1);
+}
